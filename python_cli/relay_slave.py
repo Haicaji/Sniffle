@@ -85,7 +85,7 @@ def main():
     adv_data = advert.body[8:]
     scan_rsp_data = scan_rsp.body[8:]
     hw.cmd_follow(True) # accept connections
-    hw.mark_and_flush()
+    # hw.mark_and_flush()
     hw.cmd_advertise(adv_data, scan_rsp_data)
 
     # wait for someone to connect to us
@@ -132,8 +132,7 @@ def sock_recv_print_forward(conn):
 
 def ser_recv_print_forward(conn, quiet):
     msg = hw.recv_and_decode()
-    print("from ser_recv_print_forward")
-    print_message(msg, quiet)
+    print_message(msg, quiet, "from ser_recv_print_forward")
 
     # only forward packets
     if not isinstance(msg, PacketMessage):
@@ -147,19 +146,20 @@ def ser_recv_print_forward(conn, quiet):
         # forward received packets to relay master
         conn.send_msg(MessageType.PACKET, pack('<H', msg.event) + msg.body)
 
-def print_message(msg, quiet=False):
+def print_message(msg, quiet=False, debug_message=""):
     if isinstance(msg, PacketMessage):
-        print_packet(msg, quiet)
+        print_packet(msg, quiet, debug_message)
     elif isinstance(msg, DebugMessage) or \
             isinstance(msg, StateMessage) or \
             isinstance(msg, MeasurementMessage):
         print(msg, end='\n\n')
 
-def print_packet(pkt, quiet=False):
+def print_packet(pkt, quiet=False, debug_message=""):
     # Further decode and print the packet
     dpkt = DPacketMessage.decode(pkt)
     if quiet and isinstance(dpkt, LlDataContMessage) and dpkt.data_length == 0:
         return
+    print(debug_message)
     print(dpkt, end='\n\n')
 
 if __name__ == "__main__":

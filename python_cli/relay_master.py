@@ -269,8 +269,7 @@ def sock_recv_print_forward(conn, quiet, filter_changes=False):
     # Passing on PDUs with instants in the past would break the connection
     if not (filter_changes and has_instant(pkt)):
         hw.cmd_transmit(llid, pdu, event)
-    print("from sock_recv_print_forward")
-    print_message(pkt, quiet)
+    print_message(pkt, quiet, "from sock_recv_print_forward")
 
 def ser_recv_print_forward(conn, quiet, filter_changes=False):
     msg = hw.recv_and_decode()
@@ -287,12 +286,11 @@ def ser_recv_print_forward(conn, quiet, filter_changes=False):
             # LL_REJECT_EXT_IND, unacceptable connection parameters
             hw.cmd_transmit(3, b'\x11\x0F\x3B')
 
-    print("from ser_recv_print_forward")
-    print_message(msg, quiet)
+    print_message(msg, quiet, "from ser_recv_print_forward")
 
-def print_message(msg, quiet=False):
+def print_message(msg, quiet=False, debug_message=""):
     if isinstance(msg, DPacketMessage):
-        print_packet(msg, quiet)
+        print_packet(msg, quiet, debug_message)
     elif isinstance(msg, DebugMessage) or \
             isinstance(msg, StateMessage) or \
             isinstance(msg, MeasurementMessage):
@@ -398,10 +396,11 @@ def connect_target(targ_mac, chan=37, targ_random=True, initiator_mac=None, init
     # now enter initiator mode
     return hw.initiate_conn(targ_mac, targ_random, interval, latency)
 
-def print_packet(pkt, quiet=False):
+def print_packet(pkt, quiet=False, debug_message=""):
     is_not_empty = not (isinstance(pkt, LlDataContMessage) and pkt.data_length == 0)
 
     if not quiet or is_not_empty:
+        print(debug_message)
         print(pkt, end='\n\n')
 
     # Record the packet if PCAP writing is enabled
