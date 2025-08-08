@@ -127,10 +127,12 @@ def sock_recv_print_forward(conn):
     pkt.ts_epoch = time()
     pkt.ts = pkt.ts_epoch - hw.decoder_state.first_epoch_time
     pkt.event = event
+    print("from sock_recv_print_forward")
     print(pkt, end='\n\n')
 
 def ser_recv_print_forward(conn, quiet):
     msg = hw.recv_and_decode()
+    print("from ser_recv_print_forward")
     print_message(msg, quiet)
 
     # only forward packets

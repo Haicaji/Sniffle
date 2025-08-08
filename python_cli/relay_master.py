@@ -269,6 +269,7 @@ def sock_recv_print_forward(conn, quiet, filter_changes=False):
     # Passing on PDUs with instants in the past would break the connection
     if not (filter_changes and has_instant(pkt)):
         hw.cmd_transmit(llid, pdu, event)
+    print("from sock_recv_print_forward")
     print_message(pkt, quiet)
 
 def ser_recv_print_forward(conn, quiet, filter_changes=False):
@@ -286,6 +287,7 @@ def ser_recv_print_forward(conn, quiet, filter_changes=False):
             # LL_REJECT_EXT_IND, unacceptable connection parameters
             hw.cmd_transmit(3, b'\x11\x0F\x3B')
 
+    print("from ser_recv_print_forward")
     print_message(msg, quiet)
 
 def print_message(msg, quiet=False):
